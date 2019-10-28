@@ -58,6 +58,7 @@ exports.down = function(knex) {
         .dropTable('trip')
         .dropTable('location')
         .dropTable('user')
+        .dropTable('role')
 
         // .then(_ =>
         //     knex.schema
