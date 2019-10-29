@@ -1,4 +1,0 @@
-erwan.boehm.com.my_shared_agenda
-drawable launch_background
-mipmap ic_launcher
-style LaunchTheme
