@@ -1,4 +1,7 @@
+import 'dart:ffi';
+
 import 'package:flutter/material.dart';
+import 'package:sticky_header_list/sticky_header_list.dart';
 import 'dart:math';
 import 'Utils/Date.dart';
 import 'Widgets/FabCircularMenu.dart';
@@ -11,6 +14,33 @@ class TripDetailView extends StatefulWidget {
 }
 
 class _TripDetailViewState extends State<TripDetailView> {
+
+  List<StickyListRow> _rows = new List<StickyListRow>();
+
+
+  Future<Void> get_notifs() async {
+    List<StickyListRow> rows = new List<StickyListRow>();
+
+    for(int i=0; i<widget.trip.events.length; i++) {
+      Event event = widget.trip.events[i];
+      if (i==0 || event.date.difference(widget.trip.events[i-1].date) > Duration(days: 1)) {
+        rows.add(new HeaderRow(child: build_header(dateToString(widget.trip.events[i].date))),);
+      }
+      rows.add(new RegularRow(child: buildTripEvents(event)));
+    }
+    setState(() {
+      _rows = rows;
+    });
+    print(_rows);
+  }
+
+  @override
+  void initState() {
+    get_notifs();
+    super.initState();
+    WidgetsBinding.instance
+        .addPostFrameCallback((_) => get_notifs());
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -43,13 +73,12 @@ class _TripDetailViewState extends State<TripDetailView> {
                   )
               ),
               Container(
-                padding: EdgeInsets.only(top: 80),
-                height: MediaQuery.of(context).size.height,
-                width: double.infinity,
-                child: ListView.builder(
-                  itemCount: widget.trip.events.length,
-                  itemBuilder: buildTripEvents,
-                ),
+                  padding: EdgeInsets.only(top: 100),
+                  height: MediaQuery.of(context).size.height,
+                  width: double.infinity,
+                  child: new StickyList(
+                    children: _rows,
+                  )
               ),
               new Positioned(
                 bottom: 0.0,
@@ -124,57 +153,64 @@ class _TripDetailViewState extends State<TripDetailView> {
   );
 
 
-
-  Widget buildTripEvents(BuildContext ctxt, int index) {
-
-    Widget day = SizedBox.shrink();
-    if (index == 0 || widget.trip.events[index].date.difference(widget.trip.events[index-1].date) > Duration(days: 1)) {
-      day = Container(
-          width: double.infinity,
-          height: 50,
-          decoration: BoxDecoration(
+  Widget build_header(String dateStr) {
+    return Container(
+        width: double.infinity,
+        height: 50,
+        decoration: BoxDecoration(
             color: Colors.white,
-          ),
-          margin: EdgeInsets.symmetric(horizontal: 20),
-          child: Row(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: <Widget>[
-                Container(
-                  width: 50,
-                  margin: EdgeInsets.only(left: 15, right: 15, top: 15),
+        ),
+        margin: EdgeInsets.symmetric(horizontal: 20),
+        child: Row(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: <Widget>[
+              Container(
+                width: 50,
+                margin: EdgeInsets.only(left: 15, right: 15, top: 15),
+              ),
+              Padding(
+                padding: const EdgeInsets.only(left: 0),
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.end,
+                  children: <Widget>[
+                    Container(
+                      width: 2,
+                      height: 50,
+                      color: Theme.of(context).accentColor,
+                      margin: EdgeInsets.only(left: 13),
+                    ),
+                  ],
                 ),
-                Padding(
-                  padding: const EdgeInsets.only(left: 13),
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.end,
-                    children: <Widget>[
-                      Container(
-                        width: 2,
-                        height: 50,
-                        color: Theme.of(context).accentColor,
-                        margin: EdgeInsets.only(right: 15),
-                      ),
-                    ],
+              ),
+              Expanded(
+                  child: Container(        decoration: BoxDecoration(
+                      color: Colors.white,
+                      border: new Border(
+                          bottom: BorderSide(
+                              color: Theme.of(context).accentColor,
+                              width: 2
+                          )
+                      )
                   ),
-                ),
-                Expanded(
-                    child: Center(child: Text(dateToString(widget.trip.events[index].date).toUpperCase(), style: TextStyle(color: Theme.of(context).accentColor, fontSize: 16, fontWeight: FontWeight.bold),))
-                )
-              ]
-          )
-      );
-    }
+                      child: Center(child: Text(dateStr.toUpperCase(), style: TextStyle(color: Theme.of(context).accentColor, fontSize: 16, fontWeight: FontWeight.bold),)))
+              )
+            ]
+        )
+    );
+  }
+
+
+  Widget buildTripEvents(Event event) {
+
     return Column(
         children: <Widget>[
-          day,
-
           GestureDetector(
               onTap: () {
 //          Navigator.push(context, MaterialPageRoute(builder: (context) => new TripDetailView(trip: trip,)),);
               },
               child: Container(
                 decoration: BoxDecoration(
-                    color: Colors.white,
+                  color: Colors.white,
                 ),
                 width: double.infinity,
                 height: 110,
@@ -189,7 +225,7 @@ class _TripDetailViewState extends State<TripDetailView> {
                       child: Column(
                         mainAxisAlignment: MainAxisAlignment.start,
                         children: <Widget>[
-                          Text(timeToString(widget.trip.events[index].date),
+                          Text(timeToString(event.date),
                               style: TextStyle(
                                   color: Theme.of(context).primaryColor, fontWeight: FontWeight.bold, fontSize: 13, letterSpacing: .3)),
                         ],
@@ -212,11 +248,11 @@ class _TripDetailViewState extends State<TripDetailView> {
                           width: 30,
                           height: 30,
 //                    color: Colors.red,
-                          child: buildIcon(widget.trip.events[index].type),
+                          child: buildIcon(event.type),
                         ),
                         Container(
                           width: 2,
-                          height: 72,
+                          height: 110.0-30-8,
                           color: Theme.of(context).accentColor,
                           margin: EdgeInsets.only(right: 15),
                         ),
@@ -229,7 +265,7 @@ class _TripDetailViewState extends State<TripDetailView> {
                           crossAxisAlignment: CrossAxisAlignment.start,
                           children: <Widget>[
                             Text(
-                              widget.trip.events[index].name,
+                              event.name,
                               style: TextStyle(
                                   color: Theme.of(context).primaryColor,
                                   fontWeight: FontWeight.bold,
@@ -241,14 +277,14 @@ class _TripDetailViewState extends State<TripDetailView> {
                             Row(
                               children: <Widget>[
                                 Icon(
-                                  Icons.date_range,
+                                  Icons.edit,
                                   color: Theme.of(context).accentColor,
                                   size: 20,
                                 ),
                                 SizedBox(
                                   width: 5,
                                 ),
-                                Text(dateToString(widget.trip.events[index].date),
+                                Text("editer",
                                     style: TextStyle(
                                         color: Theme.of(context).primaryColor, fontSize: 13, letterSpacing: .3)),
                               ],

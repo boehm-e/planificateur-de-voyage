@@ -44,11 +44,10 @@ exports.up = function(knex) {
         table.increments().primary();
         table.enu('type', ['PLANE', 'BOAT', 'TRAIN', 'CAMPING', 'HOTEL']).notNullable();
         table.text('name', 100);
-        table.dateTime('start_date').notNullable();
-        table.dateTime('end_date').notNullable();
         table.dateTime('date').notNullable();
-        table.integer('location').unsigned().notNullable().references('location.id').onDelete('CASCADE');
+        table.integer('location_id').unsigned().notNullable().references('location.id').onDelete('CASCADE');
         table.integer('trip_id').unsigned().notNullable().references('trip.id').onDelete('CASCADE');
+        table.integer('user_id').unsigned().notNullable().references('user.id').onDelete('CASCADE');
     }))
 };
 

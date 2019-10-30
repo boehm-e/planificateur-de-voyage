@@ -6,18 +6,11 @@ const user = user => ({
 
 const event = event => ({
     id: event.id,
+    type: event.type,
     name: event.name,
-    start: event.start,
-    end: event.end,
-    canceled: !!event.canceled,
-    user: user(event.user),
-    atendees: event.atendees.map(atendee => ({
-        id: atendee.user.id,
-        invitation_id: atendee.id,
-        email: atendee.user.email,
-        role: atendee.user.role.authority,
-        accepted: atendee.accepted == null ? null : !!atendee.accepted
-    }))
+    date: event.date,
+    location: location(event.location)
+    // user: user(event.user),
 });
 
 const group = group => ({
@@ -35,4 +28,21 @@ const group = group => ({
     }))
 });
 
-export default {user, event, group};
+const trip = trip => ({
+    id: trip.id,
+    name: trip.name,
+    start_date: trip.start_date,
+    end_date: trip.end_date,
+    image_preview: trip.image_preview,
+    user: user(trip.user),
+    events: trip.events.map(_event => event(_event))
+});
+
+const location = location => ({
+    id: location.id,
+    name: trip.name,
+    latitude: location.latitude,
+    longitude: location.longitude
+});
+
+export default {user, event, group, trip, location};

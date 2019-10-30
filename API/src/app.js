@@ -9,7 +9,7 @@ import app          from './config/express-app';
 import usersRoutes  from './routes/users';
 import rolesRoutes  from './routes/roles';
 import authRoutes   from './routes/auth';
-import groupsRoutes from './routes/groups';
+import tripRoutes   from './routes/trip';
 import eventsRoutes from './routes/events';
 
 const port   	= process.env.PORT || 3000;
@@ -27,8 +27,8 @@ app.use(['/documentation', '/doc'], swaggerUi.serve, swaggerUi.setup(swaggerDocu
 app.use('/users', usersRoutes);
 app.use('/roles', rolesRoutes);
 app.use('/auth', authRoutes);
-app.use('/groups', groupsRoutes);
 app.use('/events', eventsRoutes);
+app.use('/trip', tripRoutes);
 
 
 app.get('/health-check', (_req, res) => {

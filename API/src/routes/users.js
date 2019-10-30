@@ -33,11 +33,11 @@ userRoutes.route('/:id')
         userCtrl.removeById
     );
 
-userRoutes.route('/:id/groups')
+userRoutes.route('/:id/trips')
     .get(
         passport.authenticate('jwt', { session: false }),
         authCtrl.authorizeSelfAndAdmin,
-        userCtrl.listGroups
+        userCtrl.listTrips
     );
 
 userRoutes.route('/:id/events')
@@ -45,26 +45,6 @@ userRoutes.route('/:id/events')
         passport.authenticate('jwt', { session: false }),
         authCtrl.authorizeSelfAndAdmin,
         userCtrl.listEvents
-    );
-
-userRoutes.route('/:id/notifications')
-    .get(
-        passport.authenticate('jwt', { session: false }),
-        authCtrl.authorizeSelfAndAdmin,
-        userCtrl.listNotifications
-    );
-
-userRoutes.route('/:id/events/:event_id')
-    .post(
-        passport.authenticate('jwt', { session: false }),
-        authCtrl.authorizeSelfAndAdmin,
-        userCtrl.setEventVisibility
-    );
-
-userRoutes.route('/:id/calendar')
-    .get(
-        passport.authenticate('jwt', { session: false }),
-        userCtrl.calendar
     );
 
 export default userRoutes;

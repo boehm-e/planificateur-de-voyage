@@ -26,9 +26,7 @@ eventsRoutes.route('/:id')
     .get(
         passport.authenticate('jwt', { session: false }),
         eventsCtrl.addEventToReq,
-        authCtrl.authorizeFnList([
-            req => [req.event.user.id, ...req.event.atendees.map(u => u.id)].includes(req.user.id)
-        ]),
+        authCtrl.authorizeSelfAndAdmin,
         eventsCtrl.getById
     )
     .post(

@@ -33,7 +33,10 @@ class Location {
   });
 }
 
-class Event {
+class 
+
+
+{
   final int id;
   final String type;
   final String name;

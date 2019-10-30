@@ -1,6 +1,6 @@
 import _            from 'lodash';
 import User         from './user';
-import EventAtendee from './eventAtendee';
+import Location     from './location';
 import Bookshelf    from '../config/bookshelf';
 import errors       from '../helpers/errors';
 import fmt          from '../helpers/formatters';
@@ -14,15 +14,20 @@ var Event = Bookshelf.Model.extend({
         return this.belongsTo('User', 'user_id');
     },
 
-    atendees() {
-        return this.hasMany('EventAtendee');
+    trip() {
+        return this.belongsTo('Trip', 'trip_id');
     },
 
+    location() {
+        return this.belongsTo('Location', 'location_id');
+    },
+
+
     async update(body) {
-        const realbody = _.pick(body, ['name', 'start', 'end', 'user_id', 'canceled']);
+        const realbody = _.pick(body, ['type', 'name', 'date', 'date', 'location_id', 'trip_id']);
 
         this.set(realbody);
-        return await (await this.save()).fetch({withRelated: ['user', 'user.role', 'atendees', 'atendees.user']});
+        return await (await this.save()).fetch({withRelated: ['user', 'user.role', 'trip', 'trip.name']});
     },
 
     async delete() {
@@ -30,7 +35,7 @@ var Event = Bookshelf.Model.extend({
     }
 }, {
     async getAll() {
-        const eventList = await this.query({}).fetchAll({withRelated: ['user', 'user.role', 'atendees', 'atendees.user', 'atendees.user.role']});
+        const eventList = await this.query({}).fetchAll({withRelated: ['user', 'user.role', 'trip', 'trip.name']});
 
         return eventList
             .map(event => event.toJSON())
@@ -39,13 +44,13 @@ var Event = Bookshelf.Model.extend({
 
     async getByUser(user_id) { // there must be a cleaner way to do that
         const rawResult = await Bookshelf.knex.raw(
-            `SELECT event.id FROM event LEFT JOIN event_atendees ON event_atendees.event_id = event.id  WHERE event.user_id = ? OR event_atendees.user_id = ?`,
-            [user_id, user_id]
+            `SELECT event.id FROM event WHERE event.user_id = ?`,
+            [user_id]
         );
-        const userEventsIds = rawResult[0].map(o => o.id);
+        const eventsIds = rawResult[0].map(o => o.id);
         const events = await this
-              .where('id', 'in', userEventsIds)
-              .fetchAll({withRelated: ['user', 'user.role', 'atendees', 'atendees.user', 'atendees.user.role']});
+              .where('id', 'in', eventsIds)
+              .fetchAll({withRelated: ['user', 'user.role', 'trip', 'trip.name', 'location']});
 
         return events
             .map(event => event.toJSON())
@@ -54,7 +59,9 @@ var Event = Bookshelf.Model.extend({
     },
 
     async getById(id) {
-        const event =  await this.where({id}).fetch({withRelated: ['user', 'user.role', 'atendees', 'atendees.user', 'atendees.user.role']});
+        console.log("GET EVENT BY ID", id);
+        // const event =  await this.where({id}).fetch({withRelated: ['user', 'user.role', 'trip', 'trip.name']});
+        const event =  await this.where({id}).fetch({withRelated: ['user', 'user.role', 'location']});
 
         if (event == null) {
             throw new errors.EVENT_NOT_FOUND();
@@ -64,9 +71,10 @@ var Event = Bookshelf.Model.extend({
         return fmt.event(event.toJSON());
     },
     async create(body) {
-        const realbody = _.pick(body, ['name', 'start', 'end', 'user_id', 'canceled']);
+        console.log("CREATE EVENT", body)
+        const realbody = _.pick(body, ['type', 'name', 'date', 'location_id', 'trip_id', 'user_id']);
         const e = (await new this(realbody).save()).toJSON();
-        const event = await this.where({id: e.id}).fetch({withRelated: ['user', 'user.role', 'atendees', 'atendees.user']});
+        const event = await this.where({id: e.id}).fetch({withRelated: ['user', 'user.role', 'trip']});
 
         return fmt.event(event.toJSON());
     },

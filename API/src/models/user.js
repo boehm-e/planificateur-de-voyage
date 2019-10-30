@@ -1,9 +1,6 @@
 import _            from 'lodash';
 import bcrypt       from 'bcrypt';
 import Role         from './role';
-import EventAtendee from './eventAtendee';
-import GroupMember  from './groupMember';
-import Group        from './group';
 import Bookshelf    from '../config/bookshelf';
 import errors       from '../helpers/errors';
 import fmt          from '../helpers/formatters';
@@ -17,18 +14,6 @@ var User = Bookshelf.Model.extend({
 
     role() {
         return this.belongsTo('Role', 'role_id');
-    },
-
-    group_members() {
-        return this.hasMany(GroupMember, 'user_id');
-    },
-
-    event_members() {
-        return this.hasMany(EventAtendee, 'user_id');
-    },
-
-    group() {
-        return this.hasMany(Group, 'user_id');
     },
 
     async update(body) {

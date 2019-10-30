@@ -2,9 +2,11 @@ import Joi          from '@hapi/joi';
 import eventService from '../services/events';
 
 const joiSchema = Joi.object().keys({
+    type: Joi.string().min(3).required(),
     name: Joi.string().min(3).required(),
-    start: Joi.date().iso().required(),
-    end: Joi.date().iso().required()
+    date: Joi.date().iso().required(),
+    location_id: Joi.number().integer().required(),
+    trip_id: Joi.number().integer().required()
 });
 
 const getAll = async (req, res, next) => {
@@ -20,11 +22,15 @@ const getAll = async (req, res, next) => {
 
 const create = async (req, res, next) => {
     const body = {
+        type: req.body.type,
         name: req.body.name,
-        start: new Date(req.body.start),
-        end: new Date(req.body.end),
-        user_id: req.user.id
+        date: new Date(req.body.date),
+        location_id: req.body.location_id,
+        trip_id: req.body.trip_id,
+        user_id: req.user.id,
     };
+
+    console.log("CREATE EVENT CONTROLLER : ", body);
 
     try {
         var event = await eventService.create(body);

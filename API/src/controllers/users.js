@@ -3,10 +3,9 @@ import Bookshelf           from '../config/bookshelf';
 import User                from '../models/user';
 import Role                from '../models/role';
 import Event               from '../models/event';
+import Trip               from '../models/trip';
 import eventService        from '../services/events';
 import userService         from '../services/users';
-import Group               from '../models/group';
-import UserEventVisibility from '../models/userEventVisibility';
 
 const joiSchema = Joi.object().keys({
     email: Joi.string().email({ minDomainSegments: 2 }).required(),
@@ -153,65 +152,19 @@ const listEvents = async (req, res, next) => {
     return res.json(eventList);
 };
 
-const listGroups = async (req, res, next) => {
+const listTrips = async (req, res, next) => {
     const user_id = req.params.id;
 
     try {
-        var groupList = await Group.getByUser(user_id);
+        var tripList = await Trip.getByUser(user_id);
     } catch (err) {
         req.log.error(err);
         return next(err);
     }
 
-    return res.json(groupList);
+    return res.json(tripList);
 };
 
-const listNotifications = async (req, res, next) => {
-    const user_id = req.params.id;
-    try {
-        var notifications = await userService.getNotifications(user_id);
-    } catch (err) {
-        req.log.error(err);
-        return next(err);
-    }
-
-    return res.json(notifications);
-};
-
-const setEventVisibility = async (req, res, next) => {
-    const user_id   = req.params.id;
-    const event_id  = req.params.event_id;
-    const group_ids = req.body.groups_ids;
-    const user_ids  = req.body.users_ids;
-
-    const groupVisibilities = group_ids.map(group_id => ({
-        event_id,
-        user_id,
-        visible_to_group_id: group_id
-    }));
-
-    const userVisibilities = user_ids.map(visible_to_user_id => ({
-        event_id,
-        user_id,
-        visible_to_user_id
-    }));
-
-    const objectsToInsert = [...groupVisibilities, ...userVisibilities];
-    // should be moved in a service
-    const visibilities = await Bookshelf.knex('user_event_visibility').insert(objectsToInsert);
-    const event = await eventService.getById(event_id);
-
-    return res.json(event);
-};
-
-const calendar = async (req, res, next) => {
-    const user_id = parseInt(req.params.id);
-    const viewer_id = req.user.id;
-
-    const eventList = await eventService.buildCalendar(user_id, viewer_id);
-
-    return res.json(eventList);
-};
 
 export default {
     getAll,
@@ -221,8 +174,5 @@ export default {
     updateById,
     removeById,
     listEvents,
-    listGroups,
-    listNotifications,
-    setEventVisibility,
-    calendar
+    listTrips
 };
