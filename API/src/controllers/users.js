@@ -154,7 +154,6 @@ const listEvents = async (req, res, next) => {
 
 const listTrips = async (req, res, next) => {
     const user_id = req.params.id;
-
     try {
         var tripList = await Trip.getByUser(user_id);
     } catch (err) {

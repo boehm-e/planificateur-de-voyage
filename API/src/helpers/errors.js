@@ -7,6 +7,7 @@ const errors = {
     GROUP_NOT_FOUND: 'Group not found !',
     USER_NOT_FOUND: 'User not found !',
     EVENT_NOT_FOUND: 'Event not found !',
+    TRIP_NOT_FOUND: 'Trip not found !',
     ROLE_NOT_FOUND: 'Role not found !'
 };
 

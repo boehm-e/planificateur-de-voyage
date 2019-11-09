@@ -11,6 +11,7 @@ import rolesRoutes  from './routes/roles';
 import authRoutes   from './routes/auth';
 import tripRoutes   from './routes/trip';
 import eventsRoutes from './routes/events';
+import locationRoutes from './routes/location';
 
 const port   	= process.env.PORT || 3000;
 const server	= http.createServer(app);
@@ -29,6 +30,7 @@ app.use('/roles', rolesRoutes);
 app.use('/auth', authRoutes);
 app.use('/events', eventsRoutes);
 app.use('/trip', tripRoutes);
+app.use('/location', locationRoutes);
 
 
 app.get('/health-check', (_req, res) => {

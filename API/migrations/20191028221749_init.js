@@ -35,6 +35,7 @@ exports.up = function(knex) {
         table.increments().primary();
         table.integer('user_id').unsigned().notNullable().references('user.id').onDelete('CASCADE');
         table.string('name', 100).notNullable();
+        table.text('description', 500);
         table.dateTime('start_date').notNullable();
         table.dateTime('end_date').notNullable();
         table.string('image_preview');
@@ -42,10 +43,14 @@ exports.up = function(knex) {
     /* create group table */
     .then(_ => knex.schema.createTable('event', table => {
         table.increments().primary();
-        table.enu('type', ['PLANE', 'BOAT', 'TRAIN', 'CAMPING', 'HOTEL']).notNullable();
+        table.enu('type', ['MARCHE', 'BATEAU', 'ARRET', 'NOTE', 'RESTAURANT', 'TRAIN', 'HOTEL']).notNullable();
         table.text('name', 100);
-        table.dateTime('date').notNullable();
-        table.integer('location_id').unsigned().notNullable().references('location.id').onDelete('CASCADE');
+        table.dateTime('start_date').notNullable();
+        table.dateTime('end_date').nullable();
+        table.integer('start_location_id').unsigned().notNullable().references('location.id').onDelete('CASCADE');
+        table.integer('end_location_id').unsigned().nullable().references('location.id').onDelete('CASCADE');
+        // table.integer('location_id').unsigned().notNullable().references('location.id').onDelete('CASCADE');
+        // table.integer('location_id').unsigned().notNullable().references('location.id').onDelete('CASCADE');
         table.integer('trip_id').unsigned().notNullable().references('trip.id').onDelete('CASCADE');
         table.integer('user_id').unsigned().notNullable().references('user.id').onDelete('CASCADE');
     }))

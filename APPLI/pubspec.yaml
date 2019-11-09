@@ -26,6 +26,11 @@ dependencies:
   flutter_custom_clippers:
   cached_network_image:
   sticky_header_list:
+  rxdart:
+  flutter_slidable_list_view:
+  flutter_cupertino_date_picker:
+  toast: ^0.1.5
+  direct_select: "^1.0.0"
 
 dev_dependencies:
   flutter_test:

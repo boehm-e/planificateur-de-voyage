@@ -1,5 +1,7 @@
 library fab_circular_menu;
 
+import 'dart:math';
+
 import 'package:flutter/material.dart';
 import 'dart:math' as math;
 import 'package:vector_math/vector_math.dart' as vector;
@@ -27,7 +29,7 @@ class FabCircularMenu extends StatefulWidget {
     this.fabColor,
     this.fabOpenIcon = const Icon(Icons.menu),
     this.fabCloseIcon = const Icon(Icons.close),
-    this.animationDuration = const Duration(milliseconds: 800)
+    this.animationDuration = const Duration(milliseconds: 800),
   });
 
   @override
@@ -36,7 +38,7 @@ class FabCircularMenu extends StatefulWidget {
 }
 
 class _FabCircularMenuState extends State<FabCircularMenu>
-    with SingleTickerProviderStateMixin {
+    with TickerProviderStateMixin {
 
   double ringDiameter;
   double ringWidth;
@@ -83,6 +85,13 @@ class _FabCircularMenuState extends State<FabCircularMenu>
   }
 
   @override
+  void dispose() {
+    // TODO: implement dispose
+    controller.dispose();
+    super.dispose();
+  }
+
+  @override
   Widget build(BuildContext context) {
     final double bottom = -(scaleAnimation.value * ringDiameter / 2 - 40.0 - (widget.fabMargin.bottom / 2));
     final double right = -(scaleAnimation.value * ringDiameter / 2 - 40.0 - (widget.fabMargin.right / 2));
@@ -90,7 +99,7 @@ class _FabCircularMenuState extends State<FabCircularMenu>
     return Stack(
       alignment: Alignment.bottomRight,
       children: <Widget>[
-      IgnorePointer(ignoring: !this.open, child: widget.child),
+        IgnorePointer(ignoring: !this.open, child: widget.child),
 
         Positioned(
           bottom: bottom,
@@ -126,6 +135,7 @@ class _FabCircularMenuState extends State<FabCircularMenu>
         Padding(
           padding: widget.fabMargin,
           child: FloatingActionButton(
+              heroTag: "test",
               child: open ? widget.fabCloseIcon : widget.fabOpenIcon,
               backgroundColor: fabColor,
               onPressed: () {

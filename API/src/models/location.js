@@ -38,12 +38,9 @@ var Location = Bookshelf.Model.extend({
         return fmt.location(location.toJSON());
     },
     async create(body) {
-        console.log("CREATE LOCATION", body);
         const realbody = _.pick(body, ['name', 'latitude', 'longitude']);
         const e = (await new this(realbody).save()).toJSON();
-        console.log("CREATE LOCATION 2");
         const location = await this.where({id: e.id}).fetch();
-        console.log("CREATE LOCATION 3", location);
 
         return fmt.location(location.toJSON());
     },

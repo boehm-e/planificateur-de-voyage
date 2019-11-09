@@ -16,14 +16,14 @@ locationRoutes.route('/')
     )
     .post(
         passport.authenticate('jwt', { session: false }),
-        authCtrl.authorizeSelfAndAdmin,
+        // authCtrl.authorizeSelfAndAdmin,
         locationCtrl.create
     );
 
 locationRoutes.route('/:id')
     .get(
         passport.authenticate('jwt', { session: false }),
-        authCtrl.authorizeSelfAndAdmin,
+        // authCtrl.authorizeSelfAndAdmin,
         locationCtrl.getById
     )
     // .put(

@@ -4,14 +4,18 @@ const user = user => ({
     role: user.role.authority
 });
 
-const event = event => ({
-    id: event.id,
-    type: event.type,
-    name: event.name,
-    date: event.date,
-    location: location(event.location)
-    // user: user(event.user),
-});
+const event = (event) => {
+    return {
+        id: event.id,
+        type: event.type,
+        name: event.name,
+        end_date: event.end_date,
+        start_date: event.start_date,
+        start_location: location(event.start_location),
+        end_location: location(event.end_location)
+        // user: user(event.user),
+    }
+};
 
 const group = group => ({
     id: group.id,
@@ -38,11 +42,15 @@ const trip = trip => ({
     events: trip.events.map(_event => event(_event))
 });
 
-const location = location => ({
-    id: location.id,
-    name: trip.name,
-    latitude: location.latitude,
-    longitude: location.longitude
-});
+const location = (location) =>  {
+    console.log("LOCATION : ", location);
+    if (!location) return null;
+    return {
+        id: location.id,
+        name: trip.name,
+        latitude: location.latitude,
+        longitude: location.longitude
+    }
+}
 
 export default {user, event, group, trip, location};

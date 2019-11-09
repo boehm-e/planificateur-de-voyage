@@ -16,6 +16,10 @@ var User = Bookshelf.Model.extend({
         return this.belongsTo('Role', 'role_id');
     },
 
+    role() {
+        return this.hasMany('Trip');
+    },
+
     async update(body) {
         const realbody = _.pick(body, ['email', 'password']);
 

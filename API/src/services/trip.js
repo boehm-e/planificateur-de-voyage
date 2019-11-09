@@ -5,7 +5,7 @@ import fmt          from '../helpers/formatters';
 
 const getAll = async () => await Trip.getAll();
 
-const create = async ({name, start_date, end_date, user_id}) => await Trip.create({ name, start_date, end_date, user_id });
+const create = async ({name, description, start_date, end_date, user_id}) => await Trip.create({ name, description, start_date, end_date, user_id });
 
 const getById = async (event_id) => await Trip.getById(event_id);
 

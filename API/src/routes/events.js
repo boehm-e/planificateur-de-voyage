@@ -18,20 +18,18 @@ eventsRoutes.route('/')
     )
     .post(
         passport.authenticate('jwt', { session: false }),
-        utils.validateReqBody(eventsCtrl.joiSchema),
+        // utils.validateReqBody(eventsCtrl.joiSchema),
         eventsCtrl.create
     );
 
 eventsRoutes.route('/:id')
     .get(
         passport.authenticate('jwt', { session: false }),
-        eventsCtrl.addEventToReq,
-        authCtrl.authorizeSelfAndAdmin,
+        // authCtrl.authorizeSelfAndAdmin,
         eventsCtrl.getById
     )
     .post(
         passport.authenticate('jwt', { session: false }),
-        eventsCtrl.addEventToReq,
         authCtrl.authorizeFnList([
             req => req.event.user.id == req.user.id
         ]),
@@ -39,24 +37,23 @@ eventsRoutes.route('/:id')
     )
     .delete(
         passport.authenticate('jwt', { session: false }),
-        eventsCtrl.addEventToReq,
         authCtrl.authorizeFnList([
             req => req.event.user.id == req.user.id
         ]),
         eventsCtrl.cancel
     );
 
-eventsRoutes.route('/:id/:user_id')
-    .put(
-        passport.authenticate('jwt', { session: false }),
-        authCtrl.authorizeFnList([
-            req => req.params.user_id == req.user.id
-        ]),
-        eventsCtrl.respondToInvitation
-    )
-    .delete(
-        passport.authenticate('jwt', { session: false }),
-        notImplemented
-    );
+// eventsRoutes.route('/:id/:user_id')
+//     .put(
+//         passport.authenticate('jwt', { session: false }),
+//         authCtrl.authorizeFnList([
+//             req => req.params.user_id == req.user.id
+//         ]),
+//         eventsCtrl.respondToInvitation
+//     )
+//     .delete(
+//         passport.authenticate('jwt', { session: false }),
+//         notImplemented
+//     );
 
 export default eventsRoutes;

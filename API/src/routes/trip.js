@@ -16,7 +16,7 @@ tripRoutes.route('/')
     )
     .post(
         passport.authenticate('jwt', { session: false }),
-        authCtrl.authorizeSelfAndAdmin,
+        // authCtrl.authorizeSelfAndAdmin,
         tripCtrl.create
     );
 
@@ -31,11 +31,11 @@ tripRoutes.route('/:id')
     //     authCtrl.authorizeSelfAndAdmin,
     //     tripCtrl.updateById
     // )
-    // .delete(
-    //     passport.authenticate('jwt', { session: false }),
-    //     authCtrl.authorizeSelfAndAdmin,
-    //     tripCtrl.removeById
-    // );
+    .delete(
+        passport.authenticate('jwt', { session: false }),
+        // authCtrl.authorizeSelfAndAdmin,
+        tripCtrl.removeById
+    );
 
 
 export default tripRoutes;
